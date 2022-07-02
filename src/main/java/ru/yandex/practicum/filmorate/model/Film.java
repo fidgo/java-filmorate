@@ -7,21 +7,21 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @AllArgsConstructor
 @ToString
-public class Film {
-    Integer id;
+public class Film extends AbstractModel {
+    private Integer id;
     @NotNull
     @NotBlank
-    String name;
+    private String name;
     @NotNull
     @NotBlank
     @Size(min = 0, max = 200)
-    String description;
+    private String description;
     @NotNull
-    LocalDate releaseDate;
+    private LocalDate releaseDate;
     @NotNull
     @Positive
-    Integer duration;
+    private Integer duration;
 }

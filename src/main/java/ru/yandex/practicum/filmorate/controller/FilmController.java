@@ -16,7 +16,35 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 @Slf4j
-public class FilmController {
+public class FilmController extends AbstractController<Film> {
+    private static final LocalDate MIN_DATE_RELEASE = LocalDate.of(1895, 12, 28);
+
+    @Override
+    void validateToCreate(Film film) {
+        validate(film);
+    }
+
+    @Override
+    void validateToUpdate(Film film) {
+        validate(film);
+        validateId(film);
+    }
+
+    private void validate(Film film) {
+
+        if (film.getReleaseDate().isBefore(MIN_DATE_RELEASE)) {
+            log.info("Дата релиза раньше 28.11.1895 у фильма {}", film);
+            throw new ValidationException("Дата релиза — не раньше 28.11.1895!");
+        }
+    }
+
+    private void validateId(Film film) {
+        if ((film.getId() == null) || (film.getId() <= 0)) {
+            log.info("Некорректный id у фильма {}", film);
+            throw new ValidationException("id фильма равна null ИЛИ меньше или равна нулю");
+        }
+    }
+    /*
     private static final LocalDate MIN_DATE_RELEASE = LocalDate.of(1895, 12, 28);
     private final HashMap<Integer, Film> films = new HashMap<>();
     private final idGenerator idGen = new idGenerator();
@@ -72,5 +100,5 @@ public class FilmController {
         }
     }
 
-
+*/
 }
