@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NoSuchElementException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.util.idGenerator;
 
@@ -16,34 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @Slf4j
-public class UserController extends AbstractController<User> {
-
-    @Override
-    void validateToCreate(User user) {
-        updateIfEmptyNameByLogin(user);
-    }
-
-    @Override
-    void validateToUpdate(User user) {
-        validateId(user);
-        updateIfEmptyNameByLogin(user);
-    }
-
-    private void validateId(User user) {
-        if ((user.getId() == null) || (user.getId() <= 0)) {
-            log.info("Некорректный id у пользователя {} измнилась name на логин", user);
-            throw new ValidationException("id пользователя равна null ИЛИ меньше или равна нулю");
-        }
-    }
-
-    private void updateIfEmptyNameByLogin(User user) {
-        if (user.getName().isBlank()) {
-            user.setName(user.getLogin());
-            log.info("У пользователя {} измнилась name на логин", user);
-        }
-    }
-
-    /*
+public class UserController {
     private HashMap<Integer, User> users = new HashMap<>();
     private final idGenerator idGen = new idGenerator();
 
@@ -88,6 +60,4 @@ public class UserController extends AbstractController<User> {
             log.info("У пользователя {} измнилась name на логин", user);
         }
     }
-
-     */
 }

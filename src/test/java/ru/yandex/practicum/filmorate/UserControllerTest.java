@@ -13,10 +13,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserControllerTest {
-    private LocalDate ld;
-    private User user;
-    private UserController userController;
-    private List<User> users;
+    LocalDate ld;
+    User user;
+    UserController userController;
+    List<User> users;
 
     @BeforeEach
     void beforeEach() {
@@ -28,12 +28,12 @@ public class UserControllerTest {
     @Test
     void createTotallyValidUser() {
 
-        users = userController.getData();
+        users = userController.getAllUsers();
         assertNotNull(users, "Список не равен null");
         assertEquals(0, users.size(), "Количество элементов списка не равно нулю!");
 
         userController.create(user);
-        users = userController.getData();
+        users = userController.getAllUsers();
         assertNotNull(users, "Список не равен null");
         assertEquals(1, users.size(), "Количество элементов списка не равно 1!");
         assertEquals(user, users.get(0), "Пользователи НЕ равны");
@@ -43,7 +43,7 @@ public class UserControllerTest {
     void createValidUserWithBlankName() {
         user.setName(" ");
         userController.create(user);
-        users = userController.getData();
+        users = userController.getAllUsers();
         assertNotNull(users, "Список не равен null");
         assertEquals(1, users.size(), "Количество элементов списка не равно 1!");
 
@@ -58,7 +58,7 @@ public class UserControllerTest {
         User toUpdate = new User(user.getId(), "update@mail.ru", "update", "jupdate", ld);
         userController.update(toUpdate);
 
-        users = userController.getData();
+        users = userController.getAllUsers();
         assertNotNull(users, "Список не равен null");
         assertEquals(1, users.size(), "Количество элементов списка не равно 1!");
 
@@ -73,7 +73,7 @@ public class UserControllerTest {
 
         assertThrows(NoSuchElementException.class, () -> userController.update(toUpdate));
 
-        users = userController.getData();
+        users = userController.getAllUsers();
         assertNotNull(users, "Список не равен null");
         assertEquals(1, users.size(), "Количество элементов списка не равно 1!");
         assertNotEquals(toUpdate, users.get(0), "Обновился user");
@@ -87,7 +87,7 @@ public class UserControllerTest {
 
         assertThrows(ValidationException.class, () -> userController.update(toUpdate));
 
-        users = userController.getData();
+        users = userController.getAllUsers();
         assertNotNull(users, "Список не равен null");
         assertEquals(1, users.size(), "Количество элементов списка не равно 1!");
         assertNotEquals(toUpdate, users.get(0), "Обновился user");
@@ -100,7 +100,7 @@ public class UserControllerTest {
         User toUpdate = new User(user.getId(), "update@mail.ru", "update", " ", ld);
         userController.update(toUpdate);
 
-        users = userController.getData();
+        users = userController.getAllUsers();
         assertNotNull(users, "Список не равен null");
         assertEquals(1, users.size(), "Количество элементов списка не равно 1!");
 

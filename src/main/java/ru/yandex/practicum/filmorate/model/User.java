@@ -7,21 +7,21 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode
 @AllArgsConstructor
 @ToString
-public class User extends AbstractModel {
-    private Integer id;
+public class User {
+    Integer id;
     @NotNull
     @Email
-    private String email;
+    String email;
     @NotNull
     @NotBlank
     @Pattern(regexp = "^[^\\s]*$")
-    private String login;
+    String login;
     @NotNull
-    private String name;
+    String name;
     @NotNull
     @Past
-    private LocalDate birthday;
+    LocalDate birthday;
 }

@@ -13,11 +13,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FilmControllerTest {
-    private LocalDate ld;
-    private Film film;
-    private FilmController filmController;
-    private List<Film> films;
-    private String correctDescription = "While traveling to California to race against The King";
+    LocalDate ld;
+    Film film;
+    FilmController filmController;
+    List<Film> films;
+    String correctDescription = "While traveling to California to race against The King";
 
     @BeforeEach
     void beforeEach() {
@@ -28,12 +28,12 @@ public class FilmControllerTest {
 
     @Test
     void createTotallyValidFilm() {
-        films = filmController.getData();
+        films = filmController.getAllFilms();
         assertNotNull(films, "Список не равен null");
         assertEquals(0, films.size(), "Количество элементов списка не равно нулю!");
 
         filmController.create(film);
-        films = filmController.getData();
+        films = filmController.getAllFilms();
         assertNotNull(films, "Список не равен null");
         assertEquals(1, films.size(), "Количество элементов списка не равно 1!");
         assertEquals(film, films.get(0), "Фильмы НЕ равны");
@@ -44,7 +44,7 @@ public class FilmControllerTest {
         LocalDate oldestDate = LocalDate.of(1895, 12, 28);
         film.setReleaseDate(oldestDate);
         filmController.create(film);
-        films = filmController.getData();
+        films = filmController.getAllFilms();
         assertNotNull(films, "Список не равен null");
         assertEquals(1, films.size(), "Количество элементов списка не равно 1!");
         assertEquals(film, films.get(0), "Фильмы НЕ равны");
@@ -56,7 +56,7 @@ public class FilmControllerTest {
         LocalDate oldDate = LocalDate.of(1700, 1, 5);
         film.setReleaseDate(oldDate);
         assertThrows(ValidationException.class, () -> filmController.create(film));
-        films = filmController.getData();
+        films = filmController.getAllFilms();
         assertNotNull(films, "Список не равен null");
         assertEquals(0, films.size(), "Список НЕ пуст!");
     }
@@ -68,7 +68,7 @@ public class FilmControllerTest {
         Film toUpdate = new Film(film.getId(), "update@mail.ru", "update", ld, 156);
         filmController.update(toUpdate);
 
-        films = filmController.getData();
+        films = filmController.getAllFilms();
         assertNotNull(films, "Список не равен null");
         assertEquals(1, films.size(), "Количество элементов списка не равно 1!");
 
@@ -83,7 +83,7 @@ public class FilmControllerTest {
 
         assertThrows(NoSuchElementException.class, () -> filmController.update(toUpdate));
 
-        films = filmController.getData();
+        films = filmController.getAllFilms();
         assertNotNull(films, "Список не равен null");
         assertEquals(1, films.size(), "Количество элементов списка не равно 1!");
         assertNotEquals(toUpdate, films.get(0), "Обновился film");
@@ -97,7 +97,7 @@ public class FilmControllerTest {
 
         assertThrows(ValidationException.class, () -> filmController.update(toUpdate));
 
-        films = filmController.getData();
+        films = filmController.getAllFilms();
         assertNotNull(films, "Список не равен null");
         assertEquals(1, films.size(), "Количество элементов списка не равно 1!");
         assertNotEquals(toUpdate, films.get(0), "Обновился film");
@@ -111,7 +111,7 @@ public class FilmControllerTest {
         Film toUpdate = new Film(1, "update@mail.ru", "update", oldDate, 156);
         assertThrows(ValidationException.class, () -> filmController.update(toUpdate));
 
-        films = filmController.getData();
+        films = filmController.getAllFilms();
         assertNotNull(films, "Список не равен null");
         assertEquals(1, films.size(), "Количество элементов списка не равно 1!");
 
