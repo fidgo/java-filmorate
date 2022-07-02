@@ -13,10 +13,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserControllerTest {
-    LocalDate ld;
-    User user;
-    UserController userController;
-    List<User> users;
+    private LocalDate ld;
+    private User user;
+    private UserController userController;
+    private List<User> users;
 
     @BeforeEach
     void beforeEach() {

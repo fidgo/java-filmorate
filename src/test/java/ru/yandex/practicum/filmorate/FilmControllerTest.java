@@ -13,11 +13,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FilmControllerTest {
-    LocalDate ld;
-    Film film;
-    FilmController filmController;
-    List<Film> films;
-    String correctDescription = "While traveling to California to race against The King";
+    private LocalDate ld;
+    private Film film;
+    private FilmController filmController;
+    private List<Film> films;
+    private String correctDescription = "While traveling to California to race against The King";
 
     @BeforeEach
     void beforeEach() {
