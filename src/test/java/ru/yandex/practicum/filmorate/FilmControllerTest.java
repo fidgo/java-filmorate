@@ -6,6 +6,11 @@ import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.NoSuchElementException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,8 +27,12 @@ public class FilmControllerTest {
     @BeforeEach
     void beforeEach() {
         ld = LocalDate.of(2005, 5, 7);
-        film = new Film(null, "Cars", correctDescription, ld, 117);
-        filmController = new FilmController();
+        film = new Film(null, "Cars", correctDescription, ld, 117,null);
+
+        FilmStorage testFilmStorage = new InMemoryFilmStorage();
+        UserStorage testUserStorage = new InMemoryUserStorage();
+
+        filmController = new FilmController(new FilmService(testFilmStorage, testUserStorage));
     }
 
     @Test
@@ -65,7 +74,7 @@ public class FilmControllerTest {
     void updateValidFilm() {
         filmController.create(film);
 
-        Film toUpdate = new Film(film.getId(), "update@mail.ru", "update", ld, 156);
+        Film toUpdate = new Film(film.getId(), "update@mail.ru", "update", ld, 156, null);
         filmController.update(toUpdate);
 
         films = filmController.getAllFilms();
@@ -79,7 +88,7 @@ public class FilmControllerTest {
     void updateNonExistingFilm() {
         filmController.create(film);
 
-        Film toUpdate = new Film(100, "update@mail.ru", "update", ld, 156);
+        Film toUpdate = new Film(100L, "update@mail.ru", "update", ld, 156, null);
 
         assertThrows(NoSuchElementException.class, () -> filmController.update(toUpdate));
 
@@ -93,7 +102,7 @@ public class FilmControllerTest {
     void updateFilmWithIncorrectId() {
         filmController.create(film);
 
-        Film toUpdate = new Film(0, "update@mail.ru", "update", ld, 156);
+        Film toUpdate = new Film(0L, "update@mail.ru", "update", ld, 156, null);
 
         assertThrows(ValidationException.class, () -> filmController.update(toUpdate));
 
@@ -108,7 +117,7 @@ public class FilmControllerTest {
         filmController.create(film);
 
         LocalDate oldDate = LocalDate.of(1700, 1, 5);
-        Film toUpdate = new Film(1, "update@mail.ru", "update", oldDate, 156);
+        Film toUpdate = new Film(1L, "update@mail.ru", "update", oldDate, 156, null);
         assertThrows(ValidationException.class, () -> filmController.update(toUpdate));
 
         films = filmController.getAllFilms();

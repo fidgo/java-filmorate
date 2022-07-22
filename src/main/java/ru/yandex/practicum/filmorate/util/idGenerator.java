@@ -4,9 +4,9 @@ import lombok.Setter;
 
 @Setter
 public class idGenerator {
-    private int nextId = 0;
+    private long nextId = 0;
 
-    public int getNewId() {
+    public long getNewId() {
         return ++nextId;
     }
 }
