@@ -90,7 +90,7 @@ public class UserControllerTest {
 
         User toUpdate = new User(0L, "update@mail.ru", "update", "jupdate", ld, null);
 
-        assertThrows(ValidationException.class, () -> userController.update(toUpdate));
+        assertThrows(NoSuchElementException.class, () -> userController.update(toUpdate));
 
         users = userController.getAllUsers();
         assertNotNull(users, "Список не равен null");

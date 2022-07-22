@@ -104,7 +104,7 @@ public class FilmControllerTest {
 
         Film toUpdate = new Film(0L, "update@mail.ru", "update", ld, 156, null);
 
-        assertThrows(ValidationException.class, () -> filmController.update(toUpdate));
+        assertThrows(NoSuchElementException.class, () -> filmController.update(toUpdate));
 
         films = filmController.getAllFilms();
         assertNotNull(films, "Список не равен null");
