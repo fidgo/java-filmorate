@@ -6,6 +6,9 @@ import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.exception.NoSuchElementException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,8 +24,10 @@ public class UserControllerTest {
     @BeforeEach
     void beforeEach() {
         ld = LocalDate.of(1999, 5, 7);
-        user = new User(null, "elephant@mail.ru", "King3310", "John", ld);
-        userController = new UserController();
+        user = new User(null, "elephant@mail.ru", "King3310", "John", ld, null);
+
+        UserStorage testUserStorage = new InMemoryUserStorage();
+        userController = new UserController(new UserService(testUserStorage));
     }
 
     @Test
@@ -55,7 +60,7 @@ public class UserControllerTest {
     void updateValidUser() {
         userController.create(user);
 
-        User toUpdate = new User(user.getId(), "update@mail.ru", "update", "jupdate", ld);
+        User toUpdate = new User(user.getId(), "update@mail.ru", "update", "jupdate", ld, null);
         userController.update(toUpdate);
 
         users = userController.getAllUsers();
@@ -69,7 +74,7 @@ public class UserControllerTest {
     void updateNonExistingUser() {
         userController.create(user);
 
-        User toUpdate = new User(12222, "update@mail.ru", "update", "jupdate", ld);
+        User toUpdate = new User(12222L, "update@mail.ru", "update", "jupdate", ld, null);
 
         assertThrows(NoSuchElementException.class, () -> userController.update(toUpdate));
 
@@ -83,9 +88,9 @@ public class UserControllerTest {
     void updateUserWithIncorrectId() {
         userController.create(user);
 
-        User toUpdate = new User(0, "update@mail.ru", "update", "jupdate", ld);
+        User toUpdate = new User(0L, "update@mail.ru", "update", "jupdate", ld, null);
 
-        assertThrows(ValidationException.class, () -> userController.update(toUpdate));
+        assertThrows(NoSuchElementException.class, () -> userController.update(toUpdate));
 
         users = userController.getAllUsers();
         assertNotNull(users, "Список не равен null");
@@ -97,7 +102,7 @@ public class UserControllerTest {
     void updateValidUserWithBlankName() {
         userController.create(user);
 
-        User toUpdate = new User(user.getId(), "update@mail.ru", "update", " ", ld);
+        User toUpdate = new User(user.getId(), "update@mail.ru", "update", " ", ld, null);
         userController.update(toUpdate);
 
         users = userController.getAllUsers();
