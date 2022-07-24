@@ -1,32 +1,39 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.yandex.practicum.filmorate.exception.NoSuchElementException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.ErrorResponse;
+
+import java.util.Map;
 
 @RestControllerAdvice("ru.yandex.practicum.filmorate")
 public class ErrorHandler {
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleValidationException(final ValidationException e) {
-        return new ErrorResponse(e.getMessage());
+    public ResponseEntity<Map<String, String>> handleValidationException(final ValidationException e) {
+        return new ResponseEntity<>(
+                Map.of("ValidationException", e.getMessage()),
+                HttpStatus.BAD_REQUEST
+        );
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNoSuchElementException(final NoSuchElementException e) {
-        return new ErrorResponse(e.getMessage());
+    public ResponseEntity<Map<String, String>> handleNoSuchElementException(final NoSuchElementException e) {
+        return new ResponseEntity<>(
+                Map.of("NoSuchElementException", e.getMessage()),
+                HttpStatus.NOT_FOUND
+        );
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleThrowable(final Throwable e) {
+    public ResponseEntity<Map<String, String>> handleThrowable(final Throwable e) {
         String message = e.getMessage() != null ? e.getMessage() : e.getClass().getName();
-        return new ErrorResponse(message);
+        return new ResponseEntity<>(
+                Map.of("Throwable", e.getMessage()),
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
     }
 }

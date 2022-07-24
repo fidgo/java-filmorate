@@ -7,11 +7,12 @@ import ru.yandex.practicum.filmorate.util.idGenerator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
 
-    private HashMap<Long, User> users = new HashMap<>();
+    private Map<Long, User> users = new HashMap<>();
     private final idGenerator idGen = new idGenerator();
 
     @Override

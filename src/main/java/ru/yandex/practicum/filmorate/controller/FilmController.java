@@ -19,7 +19,7 @@ import java.util.List;
 public class FilmController {
 
     @Autowired
-    FilmService filmService;
+    private FilmService filmService;
 
     private static final LocalDate MIN_DATE_RELEASE = LocalDate.of(1895, 12, 28);
 
