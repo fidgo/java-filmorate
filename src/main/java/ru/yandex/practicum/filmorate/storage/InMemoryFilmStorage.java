@@ -2,15 +2,15 @@ package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.util.idGenerator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
-@Component
+@Component("inMemoryFilmStorage")
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> films = new HashMap<>();
     private final idGenerator idGen = new idGenerator();
@@ -50,5 +50,34 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public void deleteLike(User user, Film film) {
         film.getLikesId().remove(user.getId());
+    }
+
+    @Override
+    public List<Film> getPopular(int count) {
+        return films.values().stream()
+                .sorted(Comparator.comparing(Film::getLikesId, Comparator.comparingInt(Set::size))
+                        .reversed())
+                .limit(count)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MPA> getMPA() {
+        return null;
+    }
+
+    @Override
+    public MPA getMPA(int id) {
+        return null;
+    }
+
+    @Override
+    public List<Genre> getGenres() {
+        return null;
+    }
+
+    @Override
+    public Genre getGenres(int id) {
+        return null;
     }
 }

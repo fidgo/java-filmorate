@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
@@ -18,4 +20,14 @@ public interface FilmStorage {
     void setLike(User user, Film film);
 
     void deleteLike(User user, Film film);
+
+    List<Film> getPopular(int count);
+
+    List<MPA> getMPA();
+
+    MPA getMPA(int id);
+
+    List<Genre> getGenres();
+
+    Genre getGenres(int id);
 }

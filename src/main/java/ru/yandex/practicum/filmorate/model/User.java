@@ -30,5 +30,5 @@ public class User {
     private LocalDate birthday;
 
     @JsonIgnore
-    Set<Long> friendsId = new HashSet<>();
+    private Set<Long> friendsId = new HashSet<>();
 }

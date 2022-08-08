@@ -1,30 +1,32 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoSuchElementException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@AllArgsConstructor
 public class FilmService {
 
-    @Autowired
-    private FilmStorage filmStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
     @Autowired
-    private UserStorage userStorage;
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
+                       @Qualifier("userDbStorage") UserStorage userStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
+    }
 
     public Film get(long id) {
         return getFilmIfExistOrThrowException(id);
@@ -77,11 +79,32 @@ public class FilmService {
     }
 
     public List<Film> getPopular(int count) {
-        return getAll().stream()
-                .sorted(Comparator.comparing(Film::getLikesId, Comparator.comparingInt(Set::size))
-                        .reversed())
-                .limit(count)
-                .collect(Collectors.toList());
+        return filmStorage.getPopular(count);
     }
 
+    public List<MPA> getMpa() {
+        return filmStorage.getMPA();
+    }
+
+    public MPA getMpa(int id) {
+        MPA gotMpa = filmStorage.getMPA(id);
+
+        if (gotMpa == null) {
+            throw new NoSuchElementException("Нет MPA c id=" + id);
+        }
+        return gotMpa;
+    }
+
+    public List<Genre> getGenre() {
+        return filmStorage.getGenres();
+    }
+
+    public Genre getGenre(int id) {
+        Genre gotGenre = filmStorage.getGenres(id);
+
+        if (gotGenre == null) {
+            throw new NoSuchElementException("Нет Genre c id=" + id);
+        }
+        return gotGenre;
+    }
 }

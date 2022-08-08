@@ -27,7 +27,12 @@ public class FilmControllerTest {
     @BeforeEach
     void beforeEach() {
         ld = LocalDate.of(2005, 5, 7);
-        film = new Film(null, "Cars", correctDescription, ld, 117,null);
+
+        film = new Film();
+        film.setName("Cars");
+        film.setDescription(correctDescription);
+        film.setReleaseDate(ld);
+        film.setDuration(117);
 
         FilmStorage testFilmStorage = new InMemoryFilmStorage();
         UserStorage testUserStorage = new InMemoryUserStorage();
@@ -74,7 +79,13 @@ public class FilmControllerTest {
     void updateValidFilm() {
         filmController.create(film);
 
-        Film toUpdate = new Film(film.getId(), "update@mail.ru", "update", ld, 156, null);
+        Film toUpdate = new Film();
+        toUpdate.setId(film.getId());
+        toUpdate.setName("update@mail.ru");
+        toUpdate.setDescription("update");
+        toUpdate.setReleaseDate(ld);
+        toUpdate.setDuration(156);
+
         filmController.update(toUpdate);
 
         films = filmController.getAllFilms();
@@ -88,7 +99,12 @@ public class FilmControllerTest {
     void updateNonExistingFilm() {
         filmController.create(film);
 
-        Film toUpdate = new Film(100L, "update@mail.ru", "update", ld, 156, null);
+        Film toUpdate = new Film();
+        toUpdate.setId(100L);
+        toUpdate.setName("update@mail.ru");
+        toUpdate.setDescription("update");
+        toUpdate.setReleaseDate(ld);
+        toUpdate.setDuration(156);
 
         assertThrows(NoSuchElementException.class, () -> filmController.update(toUpdate));
 
@@ -102,7 +118,12 @@ public class FilmControllerTest {
     void updateFilmWithIncorrectId() {
         filmController.create(film);
 
-        Film toUpdate = new Film(0L, "update@mail.ru", "update", ld, 156, null);
+        Film toUpdate = new Film();
+        toUpdate.setId(0L);
+        toUpdate.setName("update@mail.ru");
+        toUpdate.setDescription("update");
+        toUpdate.setReleaseDate(ld);
+        toUpdate.setDuration(156);
 
         assertThrows(NoSuchElementException.class, () -> filmController.update(toUpdate));
 
@@ -117,7 +138,14 @@ public class FilmControllerTest {
         filmController.create(film);
 
         LocalDate oldDate = LocalDate.of(1700, 1, 5);
-        Film toUpdate = new Film(1L, "update@mail.ru", "update", oldDate, 156, null);
+
+        Film toUpdate = new Film();
+        toUpdate.setId(1L);
+        toUpdate.setName("update@mail.ru");
+        toUpdate.setDescription("update");
+        toUpdate.setReleaseDate(oldDate);
+        toUpdate.setDuration(156);
+
         assertThrows(ValidationException.class, () -> filmController.update(toUpdate));
 
         films = filmController.getAllFilms();
