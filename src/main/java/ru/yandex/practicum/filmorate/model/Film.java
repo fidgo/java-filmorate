@@ -33,7 +33,4 @@ public class Film {
     private MPA mpa;
 
     private Set<Genre> genres = new HashSet<>();
-
-    @JsonIgnore
-    private Set<Long> likesId = new HashSet<>();
 }

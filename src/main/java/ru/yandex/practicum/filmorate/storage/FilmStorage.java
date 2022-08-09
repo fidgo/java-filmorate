@@ -17,17 +17,6 @@ public interface FilmStorage {
 
     List<Film> getAll();
 
-    void setLike(User user, Film film);
-
-    void deleteLike(User user, Film film);
-
     List<Film> getPopular(int count);
 
-    List<MPA> getMPA();
-
-    MPA getMPA(int id);
-
-    List<Genre> getGenres();
-
-    Genre getGenres(int id);
 }

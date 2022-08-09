@@ -12,8 +12,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.FilmDbStorage;
-import ru.yandex.practicum.filmorate.storage.UserDbStorage;
+import ru.yandex.practicum.filmorate.storage.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -27,9 +26,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class JavaFilmorateApplicationTests {
-    private final UserDbStorage userDbStorage;
-    private final FilmDbStorage filmDbStorage;
-
+    private final UserStorage userStorage;
+    private final FilmStorage filmStorage;
+    private final LikeStorage likeStorage;
+    private final FriendStorage friendStorage;
+    private final MPAStorage mpaStorage;
+    private final GenreStorage genreStorage;
     private static final String FILM_TITANIC_DESCRIPTION = "Titanic is a 1997 American epic romance and disaster film" +
             " directed, written, produced, and co-edited by James Cameron. Incorporating both historical and" +
             " fictionalized aspects.";
@@ -42,7 +44,6 @@ class JavaFilmorateApplicationTests {
     private static Film kombat;
 
     private static List<MPA> allMpas;
-
     private static List<Genre> allGenres;
 
     @BeforeAll
@@ -111,31 +112,31 @@ class JavaFilmorateApplicationTests {
 
     @BeforeEach
     public void beforeEach() {
-        userDbStorage.create(john);
-        filmDbStorage.create(titanic);
+        userStorage.create(john);
+        filmStorage.create(titanic);
     }
 
     @Test
     public void getUserAndFilmById() {
 
-        User gotUser = userDbStorage.get(1L);
+        User gotUser = userStorage.get(1L);
         assertEquals(john, gotUser, "Разные пользователи");
 
-        Film gotFilm = filmDbStorage.get(1L);
+        Film gotFilm = filmStorage.get(1L);
         assertEquals(titanic, gotFilm, "Разные фильмы");
     }
 
     @Test
     public void getAllUserAndFilm() {
 
-        List<User> gotListUsers = userDbStorage.getAll();
+        List<User> gotListUsers = userStorage.getAll();
         assertNotNull(gotListUsers, "Какой-то список пользователей нашелся");
         assertEquals(1, gotListUsers.size(), "Размер списка другой");
         User gotUser = gotListUsers.get(0);
         assertEquals(john, gotUser, "Разные пользователи");
 
 
-        List<Film> gotListFilms = filmDbStorage.getAll();
+        List<Film> gotListFilms = filmStorage.getAll();
         assertNotNull(gotListFilms, "Какой-то список фильмов нашелся");
         assertEquals(1, gotListFilms.size(), "Размер списка другой");
         Film gotFilm = gotListFilms.get(0);
@@ -145,49 +146,49 @@ class JavaFilmorateApplicationTests {
     @Test
     public void getUsersAndFilmsByWrongId() {
 
-        User gotUser = userDbStorage.get(1000L);
+        User gotUser = userStorage.get(1000L);
         assertNull(gotUser, "Какой-то пользователь нашелся");
 
-        Film gotFilm = filmDbStorage.get(1000L);
+        Film gotFilm = filmStorage.get(1000L);
         assertNull(gotFilm, "Какой-то фильм нашелся");
     }
 
     @Test
     public void updateUserAndFilm() {
 
-        User gotUser = userDbStorage.update(jack);
+        User gotUser = userStorage.update(jack);
         assertEquals(jack, gotUser, "Пользователь не обновился");
 
-        Film gotFilm = filmDbStorage.update(cars);
+        Film gotFilm = filmStorage.update(cars);
         assertEquals(cars, gotFilm, "Фильм не обновился");
     }
 
     @Test
     public void createUserAndFilm() {
 
-        User gotUser = userDbStorage.create(kirk);
+        User gotUser = userStorage.create(kirk);
         assertEquals(kirk, gotUser, "Пользователь не создался");
 
-        Film gotFilm = filmDbStorage.create(kombat);
+        Film gotFilm = filmStorage.create(kombat);
         assertEquals(kombat, gotFilm, "Фильм не создался");
     }
 
     @Test
     public void addFriendAndGetFriendAndDeleteFriend() {
 
-        List<User> johnFriends = userDbStorage.getFriends(john);
+        List<User> johnFriends = userStorage.getFriends(john);
         assertNotNull(johnFriends, "Список равен NULL");
         assertEquals(0, johnFriends.size(), "Друзья какие-то есть");
 
-        User addedKirk = userDbStorage.create(kirk);
-        userDbStorage.setFriend(john, addedKirk);
-        johnFriends = userDbStorage.getFriends(john);
+        User addedKirk = userStorage.create(kirk);
+        friendStorage.setFriend(john, addedKirk);
+        johnFriends = userStorage.getFriends(john);
         assertNotNull(johnFriends, "Список равен NULL");
         assertEquals(1, johnFriends.size(), "Ошиблись с количеством друзей");
         assertEquals(addedKirk, johnFriends.get(0), "John не дружит с Kirk");
 
-        userDbStorage.deleteFriend(john, kirk);
-        johnFriends = userDbStorage.getFriends(john);
+        friendStorage.deleteFriend(john, kirk);
+        johnFriends = userStorage.getFriends(john);
         assertNotNull(johnFriends, "Список равен NULL");
         assertEquals(0, johnFriends.size(), "Друзья какие-то есть");
 
@@ -196,21 +197,21 @@ class JavaFilmorateApplicationTests {
     @Test
     public void addFriendsAndGetCommonFriend() {
 
-        User addedKirk = userDbStorage.create(kirk);
-        User addedJack = userDbStorage.create(jack);
-        userDbStorage.setFriend(john, addedKirk);
-        List<User> comonFriends = userDbStorage.getCommonFriends(john, addedJack);
+        User addedKirk = userStorage.create(kirk);
+        User addedJack = userStorage.create(jack);
+        friendStorage.setFriend(john, addedKirk);
+        List<User> comonFriends = userStorage.getCommonFriends(john, addedJack);
         assertNotNull(comonFriends, "Список равен NULL");
         assertEquals(0, comonFriends.size(), "Ошиблись с количеством общих друзей");
 
-        userDbStorage.setFriend(addedJack, addedKirk);
-        comonFriends = userDbStorage.getCommonFriends(john, addedJack);
+        friendStorage.setFriend(addedJack, addedKirk);
+        comonFriends = userStorage.getCommonFriends(john, addedJack);
         assertNotNull(comonFriends, "Список равен NULL");
         assertEquals(1, comonFriends.size(), "Ошиблись с количеством общих друзей");
         assertEquals(addedKirk, comonFriends.get(0), "Kirk не общий друг");
 
-        userDbStorage.deleteFriend(addedJack, addedKirk);
-        comonFriends = userDbStorage.getCommonFriends(john, addedJack);
+        friendStorage.deleteFriend(addedJack, addedKirk);
+        comonFriends = userStorage.getCommonFriends(john, addedJack);
         assertNotNull(comonFriends, "Список равен NULL");
         assertEquals(0, comonFriends.size(), "Ошиблись с количеством общих друзей");
 
@@ -218,27 +219,27 @@ class JavaFilmorateApplicationTests {
 
     @Test
     public void setAndDeleteLikesAndGetPopular() {
-        User addedKirk = userDbStorage.create(kirk);
-        Film addedKombat = filmDbStorage.create(kombat);
-        filmDbStorage.setLike(john, titanic);
-        filmDbStorage.setLike(addedKirk, titanic);
-        List<Film> popularFilms = filmDbStorage.getPopular(1);
+        User addedKirk = userStorage.create(kirk);
+        Film addedKombat = filmStorage.create(kombat);
+        likeStorage.setLike(john, titanic);
+        likeStorage.setLike(addedKirk, titanic);
+        List<Film> popularFilms = filmStorage.getPopular(1);
         assertNotNull(popularFilms, "Список равен NULL");
         assertEquals(1, popularFilms.size(), "Ошиблись с количеством популярных фильмов");
         assertEquals(titanic, popularFilms.get(0), "Популярный фильм не титаник");
 
-        User addedJack = userDbStorage.create(jack);
-        filmDbStorage.setLike(john, addedKombat);
-        filmDbStorage.setLike(addedKirk, addedKombat);
-        filmDbStorage.setLike(addedJack, addedKombat);
-        popularFilms = filmDbStorage.getPopular(1);
+        User addedJack = userStorage.create(jack);
+        likeStorage.setLike(john, addedKombat);
+        likeStorage.setLike(addedKirk, addedKombat);
+        likeStorage.setLike(addedJack, addedKombat);
+        popularFilms = filmStorage.getPopular(1);
         assertNotNull(popularFilms, "Список равен NULL");
         assertEquals(1, popularFilms.size(), "Ошиблись с количеством популярных фильмов");
         assertEquals(addedKombat, popularFilms.get(0), "Популярный фильм не Kombat");
 
-        filmDbStorage.deleteLike(addedKirk, addedKombat);
-        filmDbStorage.deleteLike(addedJack, addedKombat);
-        popularFilms = filmDbStorage.getPopular(1);
+        likeStorage.deleteLike(addedKirk, addedKombat);
+        likeStorage.deleteLike(addedJack, addedKombat);
+        popularFilms = filmStorage.getPopular(1);
         assertNotNull(popularFilms, "Список равен NULL");
         assertEquals(1, popularFilms.size(), "Ошиблись с количеством популярных фильмов");
         assertEquals(titanic, popularFilms.get(0), "Популярный фильм не титаник");
@@ -247,20 +248,20 @@ class JavaFilmorateApplicationTests {
 
     @Test
     public void getMpaAndGenresByIdAndAll() {
-        MPA gotMpa = filmDbStorage.getMPA(1);
+        MPA gotMpa = mpaStorage.getMPA(1);
         assertNotNull(gotMpa, "MPA равен NULL");
         assertEquals(new MPA(1, "G"), gotMpa, "Не совпали MPA");
 
-        Genre gotGenre = filmDbStorage.getGenres(1);
+        Genre gotGenre = genreStorage.getGenres(1);
         assertNotNull(gotGenre, "Genre равен NULL");
         assertEquals(new Genre(1, "Комедия"), gotGenre, "Не совпали Genre");
 
-        List<MPA> gotMpas = filmDbStorage.getMPA();
+        List<MPA> gotMpas = mpaStorage.getMPA();
         assertNotNull(gotMpa, "Список равен NULL");
         assertEquals(5, gotMpas.size(), "Количество рейтингов не совпало с ожидаемым");
         assertThat(gotMpas).hasSameElementsAs(allMpas);
 
-        List<Genre> gotGenres = filmDbStorage.getGenres();
+        List<Genre> gotGenres = genreStorage.getGenres();
         assertNotNull(gotGenres, "Список равен NULL");
         assertEquals(6, gotGenres.size(), "Количество жанров не совпало с ожидаемым");
         assertThat(gotGenres).hasSameElementsAs(allGenres);

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
-import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.*;
 import java.sql.Date;
@@ -91,20 +90,6 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public void setLike(User user, Film film) {
-
-        String sqlInsert = "INSERT INTO LIKES (USER_ID, FILM_ID) VALUES (?,?);";
-        jdbcTemplate.update(sqlInsert, user.getId(), film.getId());
-    }
-
-    @Override
-    public void deleteLike(User user, Film film) {
-
-        String sqlDelete = "DELETE FROM LIKES WHERE USER_ID = ? AND FILM_ID = ?;";
-        jdbcTemplate.update(sqlDelete, user.getId(), film.getId());
-    }
-
-    @Override
     public List<Film> getPopular(int count) {
 
         String selectByRating = "SELECT COUNT(*) as RATING, FILMS.*, MPAS.NAME FROM LIKES" +
@@ -120,48 +105,6 @@ public class FilmDbStorage implements FilmStorage {
         loadGenres(popularFilms);
 
         return popularFilms;
-    }
-
-    @Override
-    public List<MPA> getMPA() {
-
-        String select = "SELECT * FROM MPAS;";
-        List<MPA> allMpa = jdbcTemplate.query(select, (rs, rowNum) ->
-                (new MPA(rs.getInt("ID"), rs.getString("NAME"))));
-
-        return allMpa;
-    }
-
-    @Override
-    public MPA getMPA(int id) {
-
-        String select = "SELECT * FROM MPAS WHERE ID = ?;";
-        List<MPA> allMpa = jdbcTemplate.query(select, (rs, rowNum) ->
-                (new MPA(rs.getInt("ID"), rs.getString("NAME"))), id);
-
-        return allMpa.isEmpty() ? null : allMpa.get(0);
-    }
-
-    @Override
-    public List<Genre> getGenres() {
-
-        String select = "SELECT * FROM GENRES;";
-        List<Genre> allGenres = jdbcTemplate.query(select, (rs, rowNum) ->
-                (new Genre(rs.getInt("ID"), rs.getString("NAME"))));
-
-        allGenres.sort(Comparator.comparingInt(Genre::getId));
-
-        return allGenres;
-    }
-
-    @Override
-    public Genre getGenres(int id) {
-
-        String select = "SELECT * FROM GENRES WHERE ID = ?;";
-        List<Genre> allGenres = jdbcTemplate.query(select, (rs, rowNum) ->
-                (new Genre(rs.getInt("ID"), rs.getString("NAME"))), id);
-
-        return allGenres.isEmpty() ? null : allGenres.get(0);
     }
 
     private Film filmRowMapper(ResultSet rs) throws SQLException {

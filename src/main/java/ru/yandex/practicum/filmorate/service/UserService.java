@@ -2,24 +2,21 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoSuchElementException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class UserService {
 
     private final UserStorage userStorage;
-
-    public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
+    private final FriendStorage friendStorage;
 
     public User get(long id) {
         return getUserIfExistOrThrowException(id);
@@ -33,14 +30,14 @@ public class UserService {
         User user = getUserIfExistOrThrowException(id);
         User friend = getUserIfExistOrThrowException(idFriend);
 
-        userStorage.setFriend(user, friend);
+        friendStorage.setFriend(user, friend);
     }
 
     public void deleteFriend(long id, long idFriend) {
         User user = getUserIfExistOrThrowException(id);
         User friend = getUserIfExistOrThrowException(idFriend);
 
-        userStorage.deleteFriend(user, friend);
+        friendStorage.deleteFriend(user, friend);
     }
 
     public User update(User user) {
@@ -57,12 +54,6 @@ public class UserService {
         User userFromId = getUserIfExistOrThrowException(id);
 
         return userStorage.getFriends(userFromId);
-
-        /*
-        return userFromId.getFriendsId().stream()
-                .map(userStorage::get)
-                .collect(Collectors.toList());
-     */
     }
 
 
