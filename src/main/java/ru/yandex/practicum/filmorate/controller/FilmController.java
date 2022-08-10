@@ -15,11 +15,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 @Slf4j
-@AllArgsConstructor
 public class FilmController {
 
-    @Autowired
     private FilmService filmService;
+
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     private static final LocalDate MIN_DATE_RELEASE = LocalDate.of(1895, 12, 28);
 
@@ -40,6 +43,7 @@ public class FilmController {
         log.info("get /films/popular?count={count} by count={}", count);
         return filmService.getPopular(count);
     }
+
 
     @PostMapping
     public Film create(@Valid @RequestBody Film film) {

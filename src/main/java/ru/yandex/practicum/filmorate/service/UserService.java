@@ -6,18 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoSuchElementException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@AllArgsConstructor
 public class UserService {
 
+    private final UserStorage userStorage;
+    private final FriendStorage friendStorage;
+
     @Autowired
-    private UserStorage userStorage;
+    public UserService(UserStorage userStorage, FriendStorage friendStorage) {
+        this.userStorage = userStorage;
+        this.friendStorage = friendStorage;
+    }
 
     public User get(long id) {
         return getUserIfExistOrThrowException(id);
@@ -31,14 +36,14 @@ public class UserService {
         User user = getUserIfExistOrThrowException(id);
         User friend = getUserIfExistOrThrowException(idFriend);
 
-        userStorage.setFriend(user, friend);
+        friendStorage.setFriend(user, friend);
     }
 
     public void deleteFriend(long id, long idFriend) {
         User user = getUserIfExistOrThrowException(id);
         User friend = getUserIfExistOrThrowException(idFriend);
 
-        userStorage.deleteFriend(user, friend);
+        friendStorage.deleteFriend(user, friend);
     }
 
     public User update(User user) {
@@ -54,10 +59,9 @@ public class UserService {
     public List<User> getFriends(long id) {
         User userFromId = getUserIfExistOrThrowException(id);
 
-        return userFromId.getFriendsId().stream()
-                .map(userStorage::get)
-                .collect(Collectors.toList());
+        return userStorage.getFriends(userFromId);
     }
+
 
     private User getUserIfExistOrThrowException(long id) {
         User gotUser = userStorage.get(id);
@@ -69,10 +73,9 @@ public class UserService {
     }
 
     public List<User> getCommonFriends(long id, long otherId) {
-        List<User> userFriends = getFriends(id);
-        List<User> otherUserFriends = getFriends(otherId);
+        User gotUser = getUserIfExistOrThrowException(id);
+        User gotOtherUser = getUserIfExistOrThrowException(otherId);
 
-        userFriends.retainAll(otherUserFriends);
-        return userFriends;
+        return userStorage.getCommonFriends(gotUser, gotOtherUser);
     }
 }

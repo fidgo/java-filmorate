@@ -8,23 +8,25 @@ import ru.yandex.practicum.filmorate.exception.NoSuchElementException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@AllArgsConstructor
 public class FilmService {
 
-    @Autowired
-    private FilmStorage filmStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
+    private final LikeStorage likeStorage;
 
     @Autowired
-    private UserStorage userStorage;
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage, LikeStorage likeStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
+        this.likeStorage = likeStorage;
+    }
 
     public Film get(long id) {
         return getFilmIfExistOrThrowException(id);
@@ -38,14 +40,14 @@ public class FilmService {
         User user = getUserIfExistOrThrowException(idUser);
         Film film = getFilmIfExistOrThrowException(idFilm);
 
-        filmStorage.setLike(user, film);
+        likeStorage.setLike(user, film);
     }
 
     public void deleteLike(long idUser, long idFilm) {
         User user = getUserIfExistOrThrowException(idUser);
         Film film = getFilmIfExistOrThrowException(idFilm);
 
-        filmStorage.deleteLike(user, film);
+        likeStorage.deleteLike(user, film);
     }
 
     public Film update(Film film) {
@@ -77,11 +79,7 @@ public class FilmService {
     }
 
     public List<Film> getPopular(int count) {
-        return getAll().stream()
-                .sorted(Comparator.comparing(Film::getLikesId, Comparator.comparingInt(Set::size))
-                        .reversed())
-                .limit(count)
-                .collect(Collectors.toList());
+        return filmStorage.getPopular(count);
     }
 
 }

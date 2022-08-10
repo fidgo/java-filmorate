@@ -29,6 +29,8 @@ public class Film {
     @Positive
     private Integer duration;
 
-    @JsonIgnore
-    Set<Long> likesId = new HashSet<>();
+    @NotNull
+    private MPA mpa;
+
+    private Set<Genre> genres = new HashSet<>();
 }
