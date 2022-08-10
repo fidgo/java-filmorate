@@ -1,15 +1,20 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 
 @Component
-@AllArgsConstructor
 public class FriendDbStorage implements FriendStorage {
 
     private final JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public FriendDbStorage(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Override
     public void setFriend(User user, User friend) {

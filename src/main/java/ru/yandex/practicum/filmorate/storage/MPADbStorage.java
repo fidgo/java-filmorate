@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NoSuchElementException;
@@ -9,10 +10,14 @@ import ru.yandex.practicum.filmorate.model.MPA;
 import java.util.List;
 
 @Component
-@AllArgsConstructor
 public class MPADbStorage implements MPAStorage {
 
     private final JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public MPADbStorage(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Override
     public List<MPA> getMPA() {

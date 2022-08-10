@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NoSuchElementException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -12,11 +13,16 @@ import java.util.List;
 
 @Slf4j
 @Service
-@AllArgsConstructor
 public class UserService {
 
     private final UserStorage userStorage;
     private final FriendStorage friendStorage;
+
+    @Autowired
+    public UserService(UserStorage userStorage, FriendStorage friendStorage) {
+        this.userStorage = userStorage;
+        this.friendStorage = friendStorage;
+    }
 
     public User get(long id) {
         return getUserIfExistOrThrowException(id);

@@ -15,11 +15,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 @Slf4j
-@AllArgsConstructor
 public class FilmController {
 
-    @Autowired
     private FilmService filmService;
+
+    @Autowired
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
+    }
 
     private static final LocalDate MIN_DATE_RELEASE = LocalDate.of(1895, 12, 28);
 

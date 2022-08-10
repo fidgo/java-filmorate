@@ -15,11 +15,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/mpa")
 @Slf4j
-@AllArgsConstructor
 public class MPAController {
 
-    @Autowired
     private final MPAStorage mpaStorage;
+
+    @Autowired
+    public MPAController(MPAStorage mpaStorage) {
+        this.mpaStorage = mpaStorage;
+    }
 
     @GetMapping
     public List<MPA> getMpa() {
